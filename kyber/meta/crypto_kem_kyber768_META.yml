@@ -6,7 +6,7 @@ length-public-key: 1184
 length-ciphertext: 1088
 length-secret-key: 2400
 length-shared-secret: 32
-nistkat-sha256: 89e82a5bf2d4ddb2c6444e10409e6d9ca65dafbca67d1a0db2c9b54920a29172
+nistkat-sha256: c7e76b4b30c786b5b70c152a446e7832c1cb42b3816ec048dbeaf7041211b310
 principal-submitters:
   - Peter Schwabe
 auxiliary-submitters:
@@ -19,3 +19,4 @@ auxiliary-submitters:
   - John M. Schanck
   - Gregor Seiler
   - Damien Stehlé
+  - Jintai Ding
