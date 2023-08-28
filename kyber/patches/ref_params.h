@@ -1,0 +1,21 @@
+--- upstream/ref/params.h
++++ upstream-patched/ref/params.h
+@@ -27,14 +27,17 @@
+ #define KYBER_POLYVECBYTES	(KYBER_K * KYBER_POLYBYTES)
+ 
+ #if KYBER_K == 2
++#define KYBER_K 2
+ #define KYBER_ETA1 3
+ #define KYBER_POLYCOMPRESSEDBYTES    128
+ #define KYBER_POLYVECCOMPRESSEDBYTES (KYBER_K * 320)
+ #elif KYBER_K == 3
++#define KYBER_K 3
+ #define KYBER_ETA1 2
+ #define KYBER_POLYCOMPRESSEDBYTES    128
+ #define KYBER_POLYVECCOMPRESSEDBYTES (KYBER_K * 320)
+ #elif KYBER_K == 4
++#define KYBER_K 4
+ #define KYBER_ETA1 2
+ #define KYBER_POLYCOMPRESSEDBYTES    160
+ #define KYBER_POLYVECCOMPRESSEDBYTES (KYBER_K * 352)
+

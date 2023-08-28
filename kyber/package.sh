@@ -58,7 +58,7 @@ done
 )
 endtask
 
-for PARAM in kyber{512,768,1024}{,-90s}
+for PARAM in kyber{512,768,1024}
 do
   mkdir -p "${BUILD_CRYPTO_KEM}/${PARAM}/avx2"
   mkdir -p "${BUILD_CRYPTO_KEM}/${PARAM}/clean"
@@ -68,7 +68,7 @@ do
     OUT="${BUILD_CRYPTO_KEM}/${PARAM}/clean/"
     cp -Lp cbd.c indcpa.c kem.c ntt.c poly.c polyvec.c reduce.c verify.c "${OUT}"
     cp -Lp cbd.h indcpa.h kem.h ntt.h params.h poly.h polyvec.h reduce.h symmetric.h verify.h "${OUT}"
-    ([[ "${PARAM}" =~ "90s" ]] && cp -Lp symmetric-aes.{c,h} "${OUT}") || cp -Lp symmetric-shake.c "${OUT}"
+    cp -Lp symmetric-shake.c "${OUT}"
     cp "${BASE}/meta/${PARAM}_clean_api.h" "${OUT}/api.h"
   )
   endtask
@@ -80,7 +80,7 @@ do
     cp -Lp align.h cbd.h cdecl.h consts.h indcpa.h kem.h ntt.h params.h poly.h polyvec.h reduce.h rejsample.h symmetric.h verify.h "${OUT}"
     cp -Lp fq.inc shuffle.inc "${OUT}"
     cp -Lp basemul.S fq.S invntt.S ntt.S shuffle.S "${OUT}"
-    ([[ "${PARAM}" =~ "90s" ]] && cp -Lp aes256ctr.{c,h} "${OUT}") || cp -Lp fips202x4.{c,h} symmetric-shake.c "${OUT}"
+    cp -Lp fips202x4.{c,h} symmetric-shake.c "${OUT}"
     cp "${BASE}/meta/${PARAM}_avx2_api.h" "${OUT}/api.h"
   )
   endtask
@@ -169,30 +169,6 @@ $(basename -a avx2/*.inc | tr '\n' ' ')
 OBJECTS=$(basename -a avx2/*.c | sed 's/\.c/.o/' | tr '\n' ' ') \
 $(basename -a avx2/*.S | sed 's/\.S/.o/' | tr '\n' ' ')" > avx2/Makefile
 
-  if [[ "${PARAM}" =~ "90s" ]] 
-  then
-    echo "\
-CFLAGS=-mavx2 -maes -mbmi2 -mpopcnt -O3 -Wall -Wextra -Wpedantic -Werror \\
-          -Wmissing-prototypes -Wredundant-decls -std=c99 \\
-          -I../../../common \$(EXTRAFLAGS)
-
-all: \$(LIB)
-
-%.o: %.c \$(HEADERS)
-	\$(CC) \$(CFLAGS) -c -o \$@ $<
-
-%.o: %.S \$(HEADERS)
-	\$(CC) \$(CFLAGS) -c -o \$@ $<
-
-\$(LIB): \$(OBJECTS)
-	\$(AR) -r \$@ \$(OBJECTS)
-
-clean:
-	\$(RM) \$(OBJECTS)
-	\$(RM) \$(LIB)" >> avx2/Makefile
-
-  else
-
     echo "\
 KECCAK4XDIR=../../../common/keccak4x
 KECCAK4XOBJ=KeccakP-1600-times4-SIMD256.o
@@ -220,32 +196,26 @@ all: \$(LIB)
 clean:
 	\$(RM) \$(OBJECTS)
 	\$(RM) \$(LIB)" >> avx2/Makefile
-  fi
  )
 done
 
 task 'Simplifying ifdefs'
 
-for PARAM in kyber{512,768}{,-90s}
+for PARAM in kyber{512,768}
 do
   sed -i -s 's/KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K \* 352)/0/' ${BUILD_CRYPTO_KEM}/${PARAM}/{avx2,clean}/polyvec.c
   sed -i -s 's/KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K \* 320)/1/' ${BUILD_CRYPTO_KEM}/${PARAM}/{avx2,clean}/polyvec.c
 done
 
-for PARAM in kyber1024{,-90s}
+for PARAM in kyber1024
 do
   sed -i -s 's/KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K \* 352)/1/' ${BUILD_CRYPTO_KEM}/${PARAM}/{avx2,clean}/polyvec.c
   sed -i -s 's/KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K \* 320)/0/' ${BUILD_CRYPTO_KEM}/${PARAM}/{avx2,clean}/polyvec.c
 done
 
-unifdef -k -m -DKYBER_K=2 -DKYBER_ETA1=3 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -DKYBER_90S ${BUILD_CRYPTO_KEM}/kyber512-90s/*/*.{c,h,S}
-unifdef -k -m -DKYBER_K=2 -DKYBER_ETA1=3 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -UKYBER_90S ${BUILD_CRYPTO_KEM}/kyber512/*/*.{c,h,S}
-
-unifdef -k -m -DKYBER_K=3 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -DKYBER_90S ${BUILD_CRYPTO_KEM}/kyber768-90s/*/*.{c,h,S}
-unifdef -k -m -DKYBER_K=3 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -UKYBER_90S ${BUILD_CRYPTO_KEM}/kyber768/*/*.{c,h,S}
-
-unifdef -k -m -DKYBER_K=4 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=160 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -DKYBER_90S ${BUILD_CRYPTO_KEM}/kyber1024-90s/*/*.{c,h,S}
-unifdef -k -m -DKYBER_K=4 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=160 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -UKYBER_90S ${BUILD_CRYPTO_KEM}/kyber1024/*/*.{c,h,S}
+unifdef -k -m -DKYBER_K=2 -DKYBER_ETA1=3 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 ${BUILD_CRYPTO_KEM}/kyber512/*/*.{c,h,S}
+unifdef -k -m -DKYBER_K=3 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 ${BUILD_CRYPTO_KEM}/kyber768/*/*.{c,h,S}
+unifdef -k -m -DKYBER_K=4 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=160 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 ${BUILD_CRYPTO_KEM}/kyber1024/*/*.{c,h,S}
 
 unifdef -k -m -DBMI ${BUILD_CRYPTO_KEM}/kyber*/avx2/*.{c,h,S}
 endtask
@@ -255,7 +225,7 @@ MANIFEST=${BUILD_TEST}/duplicate_consistency
 mkdir -p ${MANIFEST}
 task "Preparing for duplicate consistency"
 ( cd ${MANIFEST}
-for P1 in kyber{512,768,1024}{,-90s}
+for P1 in kyber{512,768,1024}
 do
   for OUT in clean avx2
   do
@@ -266,14 +236,14 @@ done
 endtask
 
 ( cd ${MANIFEST}
-for P1 in kyber{512,768,1024}{,-90s}
+for P1 in kyber{512,768,1024}
 do
   for OUT in clean avx2
   do
     task "${P1}/${OUT} duplicate consistency"
     echo "\
 consistency_checks:" > ${P1}_${OUT}.yml
-    for P2 in kyber{512,768,1024}{,-90s}
+    for P2 in kyber{512,768,1024}
     do
       for IN in clean avx2
       do
@@ -308,7 +278,7 @@ rm -rf ${MANIFEST}/*.xxx
 
 task 'Namespacing' 
 
-for PARAM in kyber{512,768,1024}{,-90s}
+for PARAM in kyber{512,768,1024}
 do
   for IMPL in clean avx2
   do
@@ -331,7 +301,7 @@ done
 endtask
 
 task 'Checking include guards'
-for PARAM in kyber{512,768,1024}{,-90s}
+for PARAM in kyber{512,768,1024}
 do
   for IMPL in clean avx2
   do
@@ -359,7 +329,7 @@ done
 endtask
 
 task 'Sorting #includes'
-for PARAM in kyber{512,768,1024}{,-90s}
+for PARAM in kyber{512,768,1024}
 do
   for IMPL in clean avx2
   do
