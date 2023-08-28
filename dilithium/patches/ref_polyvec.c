@@ -1,6 +1,6 @@
 --- upstream/ref/polyvec.c
 +++ upstream-patched/ref/polyvec.c
-@@ -17,9 +17,11 @@
+@@ -16,9 +16,11 @@
  void polyvec_matrix_expand(polyvecl mat[K], const uint8_t rho[SEEDBYTES]) {
    unsigned int i, j;
  
@@ -15,7 +15,7 @@
  }
  
  void polyvec_matrix_pointwise_montgomery(polyveck *t, const polyvecl mat[K], const polyvecl *v) {
-@@ -44,7 +46,7 @@
+@@ -43,7 +45,7 @@
    unsigned int i;
  
    for(i = 0; i < L; ++i)
@@ -24,7 +24,7 @@
  }
  
  void polyvecl_reduce(polyvecl *v) {
-@@ -140,9 +142,10 @@
+@@ -139,9 +141,10 @@
  int polyvecl_chknorm(const polyvecl *v, int32_t bound)  {
    unsigned int i;
  
@@ -36,7 +36,7 @@
  
    return 0;
  }
-@@ -292,9 +295,10 @@
+@@ -291,9 +294,10 @@
  int polyveck_chknorm(const polyveck *v, int32_t bound) {
    unsigned int i;
  

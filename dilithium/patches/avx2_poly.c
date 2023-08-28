@@ -1,30 +1,30 @@
 --- upstream/avx2/poly.c
 +++ upstream-patched/avx2/poly.c
-@@ -403,6 +403,7 @@
+@@ -401,6 +401,7 @@
    stream128_state state;
    stream128_init(&state, seed, nonce);
    poly_uniform_preinit(a, &state);
 +  stream128_release(&state);
  }
  
- #ifndef DILITHIUM_USE_AES
-@@ -535,6 +536,7 @@
+ void poly_uniform_4x(poly *a0,
+@@ -530,6 +531,7 @@
    stream256_state state;
    stream256_init(&state, seed, nonce);
    poly_uniform_eta_preinit(a, &state);
 +  stream256_release(&state);
  }
  
- #ifndef DILITHIUM_USE_AES
-@@ -618,6 +620,7 @@
+ void poly_uniform_eta_4x(poly *a0,
+@@ -611,6 +613,7 @@
    stream256_state state;
    stream256_init(&state, seed, nonce);
    poly_uniform_gamma1_preinit(a, &state);
 +  stream256_release(&state);
  }
  
- #ifndef DILITHIUM_USE_AES
-@@ -679,12 +682,12 @@
+ void poly_uniform_gamma1_4x(poly *a0,
+@@ -670,12 +673,12 @@
    unsigned int i, b, pos;
    uint64_t signs;
    ALIGNED_UINT8(SHAKE256_RATE) buf;
@@ -42,7 +42,7 @@
  
    memcpy(&signs, buf.coeffs, 8);
    pos = 8;
-@@ -693,7 +696,7 @@
+@@ -684,7 +687,7 @@
    for(i = N-TAU; i < N; ++i) {
      do {
        if(pos >= SHAKE256_RATE) {
@@ -51,7 +51,7 @@
          pos = 0;
        }
  
-@@ -704,6 +707,7 @@
+@@ -695,6 +698,7 @@
      c->coeffs[b] = 1 - 2*(signs & 1);
      signs >>= 1;
    }
