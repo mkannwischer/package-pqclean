@@ -100,9 +100,9 @@ comments on top of the respective files." > clean/LICENSE
   echo "\
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/kyber/commit/${VERSION} via https://github.com/jschanck/package-pqclean/tree/${PACKAGER:0:8}/kyber
+      version: https://github.com/pq-crystals/kyber/commit/${VERSION} via https://github.com/mkannwischer/package-pqclean/tree/${PACKAGER:0:8}/kyber
     - name: avx2
-      version: https://github.com/pq-crystals/kyber/commit/${VERSION} via https://github.com/jschanck/package-pqclean/tree/${PACKAGER:0:8}/kyber
+      version: https://github.com/pq-crystals/kyber/commit/${VERSION} via https://github.com/mkannwischer/package-pqclean/tree/${PACKAGER:0:8}/kyber
       supported_platforms:
         - architecture: x86_64
           operating_systems:
@@ -213,9 +213,9 @@ do
   sed -i -s 's/KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K \* 320)/0/' ${BUILD_CRYPTO_KEM}/${PARAM}/{avx2,clean}/polyvec.c
 done
 
-unifdef -k -m -DKYBER_K=2 -DKYBER_ETA1=3 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 ${BUILD_CRYPTO_KEM}/kyber512/*/*.{c,h,S}
-unifdef -k -m -DKYBER_K=3 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 ${BUILD_CRYPTO_KEM}/kyber768/*/*.{c,h,S}
-unifdef -k -m -DKYBER_K=4 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=160 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 ${BUILD_CRYPTO_KEM}/kyber1024/*/*.{c,h,S}
+unifdef -k -m -DKYBER_K=2 -DKYBER_ETA1=3 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -UKYBER_90S ${BUILD_CRYPTO_KEM}/kyber512/*/*.{c,h,S}
+unifdef -k -m -DKYBER_K=3 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -UKYBER_90S ${BUILD_CRYPTO_KEM}/kyber768/*/*.{c,h,S}
+unifdef -k -m -DKYBER_K=4 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=160 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -UKYBER_90S ${BUILD_CRYPTO_KEM}/kyber1024/*/*.{c,h,S}
 
 unifdef -k -m -DBMI ${BUILD_CRYPTO_KEM}/kyber*/avx2/*.{c,h,S}
 endtask
