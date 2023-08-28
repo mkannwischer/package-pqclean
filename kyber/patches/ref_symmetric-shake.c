@@ -24,7 +24,7 @@
  }
  
  /*************************************************
-@@ -63,11 +63,11 @@
+@@ -63,11 +63,12 @@
  **************************************************/
  void kyber_shake256_rkprf(uint8_t out[KYBER_SSBYTES], const uint8_t key[KYBER_SYMBYTES], const uint8_t input[KYBER_CIPHERTEXTBYTES])
  {
@@ -41,5 +41,6 @@
 +  shake256_inc_absorb(&s, input, KYBER_CIPHERTEXTBYTES);
 +  shake256_inc_finalize(&s);
 +  shake256_inc_squeeze(out, KYBER_SSBYTES, &s);
++  shake256_inc_ctx_release(&s);
  }
 
