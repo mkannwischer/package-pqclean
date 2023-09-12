@@ -57,7 +57,7 @@ done
 )
 endtask
 
-for PARAM in dilithium{2,3,5}{,aes}
+for PARAM in dilithium{2,3,5}
 do
   mkdir -p ${BUILD_CRYPTO_SIGN}/${PARAM}/avx2
   mkdir -p ${BUILD_CRYPTO_SIGN}/${PARAM}/clean
@@ -67,9 +67,7 @@ do
     OUT=${BUILD_CRYPTO_SIGN}/${PARAM}/clean/
     cp -Lp ntt.c packing.c poly.c polyvec.c reduce.c rounding.c sign.c ${OUT}
     cp -Lp api.h ntt.h packing.h params.h poly.h polyvec.h reduce.h rounding.h sign.h symmetric.h ${OUT}
-    [[ ${PARAM} =~ "aes" ]] && 
-      cp -Lp aes256ctr.{c,h} symmetric-aes.c ${OUT} ||
-      cp -Lp symmetric-shake.c ${OUT} )
+    cp -Lp symmetric-shake.c ${OUT} )
   endtask
 
   task "Copying upstream/avx2 to ${PARAM}/avx2"
@@ -79,9 +77,7 @@ do
     cp -Lp align.h api.h cdecl.h consts.h ntt.h packing.h params.h poly.h polyvec.h rejsample.h rounding.h sign.h symmetric.h ${OUT}
     cp -Lp shuffle.inc ${OUT}
     cp -Lp invntt.S ntt.S pointwise.S shuffle.S ${OUT}
-    [[ ${PARAM} =~ "aes" ]] &&
-      cp -Lp aes256ctr.{c,h} ${OUT} ||
-      cp -Lp fips202x4.{c,h} f1600x4.S symmetric-shake.c ${OUT} )
+    cp -Lp fips202x4.{c,h} f1600x4.S symmetric-shake.c ${OUT} )
   endtask
 
 # Makefiles and other metadata
@@ -111,20 +107,6 @@ implementations:
               - aes
               - avx2
               - popcnt" >> META.yml
-
-if [[ !(${PARAM} =~ "aes") ]]
-then
-  echo -n "
-    - name: aarch64
-      version: https://github.com/neon-ntt/neon-ntt/tree/014d2a0c21d705a523b3bfd2a740f8f0a2ba7a27
-      supported_platforms:
-        - architecture: arm_8
-          operating_systems:
-              - Linux
-              - Darwin
-          required_flags:
-              - asimd" >> META.yml
-fi
 
   echo "\
 # This Makefile can be used with GNU Make or BSD Make
@@ -181,31 +163,7 @@ $(basename -a avx2/*.inc | tr '\n' ' ')
 OBJECTS=$(basename -a avx2/*.c | sed 's/\.c/.o/' | tr '\n' ' ') \
 $(basename -a avx2/*.S | sed 's/\.S/.o/' | tr '\n' ' ')" > avx2/Makefile
 
-  if [[ ${PARAM} =~ "aes" ]] 
-  then
-    echo "\
-CFLAGS=-mavx2 -maes -mpopcnt -O3 -Wall -Wextra -Wpedantic -Werror \\
-          -Wmissing-prototypes -Wredundant-decls -std=c99 \\
-          -I../../../common \$(EXTRAFLAGS)
-
-all: \$(LIB)
-
-%.o: %.c \$(HEADERS)
-	\$(CC) \$(CFLAGS) -c -o \$@ $<
-
-%.o: %.S \$(HEADERS)
-	\$(CC) \$(CFLAGS) -c -o \$@ $<
-
-\$(LIB): \$(OBJECTS)
-	\$(AR) -r \$@ \$(OBJECTS)
-
-clean:
-	\$(RM) \$(OBJECTS)
-	\$(RM) \$(LIB)" >> avx2/Makefile
-
-  else
-
-    echo "\
+echo "\
 KECCAK4XDIR=../../../common/keccak4x
 KECCAK4XOBJ=KeccakP-1600-times4-SIMD256.o
 KECCAK4X=\$(KECCAK4XDIR)/\$(KECCAK4XOBJ)
@@ -232,8 +190,7 @@ all: \$(LIB)
 clean:
 	\$(RM) \$(OBJECTS)
 	\$(RM) \$(LIB)" >> avx2/Makefile
-  fi
- )
+)
 done
 
 task 'Simplifying ifdefs'
@@ -256,9 +213,6 @@ unifdef -k -m -DDILITHIUM_MODE=2 -DD=13 -DK=4 -DL=4 -DETA=2 -UDILITHIUM_USE_AES 
 unifdef -k -m -DDILITHIUM_MODE=3 -DD=13 -DK=6 -DL=5 -DETA=4 -UDILITHIUM_USE_AES -UDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium3/*/*.{c,h,S}
 unifdef -k -m -DDILITHIUM_MODE=5 -DD=13 -DK=8 -DL=7 -DETA=2 -UDILITHIUM_USE_AES -UDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium5/*/*.{c,h,S}
 
-unifdef -k -m -DDILITHIUM_MODE=2 -DD=13 -DK=4 -DL=4 -DETA=2 -DDILITHIUM_USE_AES -UDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium2aes/*/*.{c,h,S}
-unifdef -k -m -DDILITHIUM_MODE=3 -DD=13 -DK=6 -DL=5 -DETA=4 -DDILITHIUM_USE_AES -UDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium3aes/*/*.{c,h,S}
-unifdef -k -m -DDILITHIUM_MODE=5 -DD=13 -DK=8 -DL=7 -DETA=2 -DDILITHIUM_USE_AES -UDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium5aes/*/*.{c,h,S}
 endtask
 
 
@@ -266,7 +220,7 @@ MANIFEST=${BUILD_TEST}/duplicate_consistency
 mkdir -p ${MANIFEST}
 task "Preparing for duplicate consistency"
 ( cd ${MANIFEST}
-for P1 in dilithium{2,3,5}{,aes}
+for P1 in dilithium{2,3,5}
 do
   for OUT in clean avx2
   do
@@ -277,14 +231,14 @@ done
 endtask
 
 ( cd ${MANIFEST}
-for P1 in dilithium{2,3,5}{,aes}
+for P1 in dilithium{2,3,5}
 do
   for OUT in clean avx2
   do
     task "${P1}/${OUT} duplicate consistency"
     echo "\
 consistency_checks:" > ${P1}_${OUT}.yml
-    for P2 in dilithium{2,3,5}{,aes}
+    for P2 in dilithium{2,3,5}
     do
       for IN in clean avx2
       do
@@ -319,7 +273,7 @@ rm -rf ${MANIFEST}/*.xxx
 
 task 'Namespacing' 
 
-for PARAM in dilithium{2,3,5}{,aes}
+for PARAM in dilithium{2,3,5}
 do
   for IMPL in clean avx2
   do
@@ -335,6 +289,7 @@ do
     sed -i -s '/DILITHIUM_NAMESPACE/d' *.{c,h}
     sed -i -s "s/CRYPTO_/${NAMESPACE}_CRYPTO_/g" *.{c,h}
     sed -i "s/API_H/${NAMESPACE}_API_H/" api.h
+    sed -i "s/PQCLEAN_NAMESPACE/${NAMESPACE}/" *.{c,h}
     [ "${IMPL}" == "avx2" ] && sed -i -s "s/cdecl(\(.*\))/cdecl(${NAMESPACE}_\1)/" *.S
     )
   done
@@ -342,7 +297,7 @@ done
 endtask
 
 task 'Checking include guards'
-for PARAM in dilithium{2,3,5}{,aes}
+for PARAM in dilithium{2,3,5}
 do
   for IMPL in clean avx2
   do
@@ -370,7 +325,7 @@ done
 endtask
 
 task 'Sorting #includes'
-for PARAM in dilithium{2,3,5}{,aes}
+for PARAM in dilithium{2,3,5}
 do
   for IMPL in clean avx2
   do
