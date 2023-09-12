@@ -71,8 +71,14 @@
  
    /* Expand challenge */
    poly_challenge(&c, sig);
-@@ -390,11 +393,12 @@
+@@ -386,18 +389,21 @@
+   }
+ 
+   /* Extra indices are zero for strong unforgeability */
+-  for(j = pos; j < OMEGA; ++j)
++  for(j = pos; j < OMEGA; ++j) {
      if(hint[j]) return -1;
++  }
  
    /* Call random oracle and verify challenge */
 -  shake256_init(&state);
@@ -80,13 +86,18 @@
 -  shake256_absorb(&state, buf.coeffs, K*POLYW1_PACKEDBYTES);
 -  shake256_finalize(&state);
 -  shake256_squeeze(buf.coeffs, CTILDEBYTES, &state);
+-  for(i = 0; i < CTILDEBYTES; ++i)
 +  shake256_inc_init(&state);
 +  shake256_inc_absorb(&state, mu, CRHBYTES);
 +  shake256_inc_absorb(&state, buf.coeffs, K*POLYW1_PACKEDBYTES);
 +  shake256_inc_finalize(&state);
 +  shake256_inc_squeeze(buf.coeffs, CTILDEBYTES, &state);
 +  shake256_inc_ctx_release(&state);
-   for(i = 0; i < CTILDEBYTES; ++i)
++  for(i = 0; i < CTILDEBYTES; ++i) {
      if(buf.coeffs[i] != sig[i])
        return -1;
++  }
+ 
+   return 0;
+ }
 

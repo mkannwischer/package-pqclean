@@ -72,7 +72,7 @@
  
    /* Matrix-vector multiplication; compute Az - c2^dt1 */
    poly_challenge(&cp, c); /* uses only the first SEEDBYTES bytes of c */
-@@ -281,11 +284,12 @@
+@@ -281,15 +284,16 @@
    polyveck_pack_w1(buf, &w1);
  
    /* Call random oracle and verify challenge */
@@ -81,13 +81,19 @@
 -  shake256_absorb(&state, buf, K*POLYW1_PACKEDBYTES);
 -  shake256_finalize(&state);
 -  shake256_squeeze(c2, CTILDEBYTES, &state);
+-  for(i = 0; i < CTILDEBYTES; ++i)
 +  shake256_inc_init(&state);
 +  shake256_inc_absorb(&state, mu, CRHBYTES);
 +  shake256_inc_absorb(&state, buf, K*POLYW1_PACKEDBYTES);
 +  shake256_inc_finalize(&state);
 +  shake256_inc_squeeze(c2, CTILDEBYTES, &state);
 +  shake256_inc_ctx_release(&state);
-   for(i = 0; i < CTILDEBYTES; ++i)
++  for(i = 0; i < CTILDEBYTES; ++i) {
      if(c[i] != c2[i])
        return -1;
+-
++  }
+   return 0;
+ }
+ 
 
