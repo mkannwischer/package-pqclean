@@ -47,6 +47,6 @@ cp -rp ${V1}/* ${V2}
 ( cd ${V2} || exit
 for X in "${PATCHES}"/*
 do
-  patch -p1 < "${X}"
+  patch --fuzz 3 -p1 < "${X}"
 done
 )
