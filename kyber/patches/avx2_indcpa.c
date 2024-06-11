@@ -1,5 +1,32 @@
 --- upstream/avx2/indcpa.c
 +++ upstream-patched/avx2/indcpa.c
+@@ -20,7 +20,7 @@
+ *              serialized vector of polynomials pk and the
+ *              public seed used to generate the matrix A.
+ *              The polynomial coefficients in pk are assumed to
+-*              lie in the invertal [0,q], i.e. pk must be reduced
++*              lie in the interval [0,q], i.e. pk must be reduced
+ *              by polyvec_reduce().
+ *
+ * Arguments:   uint8_t *r: pointer to the output serialized public key
+@@ -58,7 +58,7 @@
+ *
+ * Description: Serialize the secret key.
+ *              The polynomial coefficients in sk are assumed to
+-*              lie in the invertal [0,q], i.e. sk must be reduced
++*              lie in the interval [0,q], i.e. sk must be reduced
+ *              by polyvec_reduce().
+ *
+ * Arguments:   - uint8_t *r: pointer to output serialized secret key
+@@ -89,7 +89,7 @@
+ *              compressed and serialized vector of polynomials b
+ *              and the compressed and serialized polynomial v.
+ *              The polynomial coefficients in b and v are assumed to
+-*              lie in the invertal [0,q], i.e. b and v must be reduced
++*              lie in the interval [0,q], i.e. b and v must be reduced
+ *              by polyvec_reduce() and poly_reduce(), respectively.
+ *
+ * Arguments:   uint8_t *r: pointer to the output serialized ciphertext
 @@ -233,7 +233,7 @@
    ALIGNED_UINT8(REJ_UNIFORM_AVX_NBLOCKS*SHAKE128_RATE) buf[4];
    __m256i f;
