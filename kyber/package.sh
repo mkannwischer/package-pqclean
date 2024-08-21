@@ -58,7 +58,7 @@ done
 )
 endtask
 
-for PARAM in kyber{512,768,1024}
+for PARAM in ml-kem-{512,768,1024}
 do
   mkdir -p "${BUILD_CRYPTO_KEM}/${PARAM}/avx2"
   mkdir -p "${BUILD_CRYPTO_KEM}/${PARAM}/clean"
@@ -201,23 +201,23 @@ done
 
 task 'Simplifying ifdefs'
 
-for PARAM in kyber{512,768}
+for PARAM in ml-kem-{512,768}
 do
   sed -i -s 's/KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K \* 352)/0/' ${BUILD_CRYPTO_KEM}/${PARAM}/{avx2,clean}/polyvec.c
   sed -i -s 's/KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K \* 320)/1/' ${BUILD_CRYPTO_KEM}/${PARAM}/{avx2,clean}/polyvec.c
 done
 
-for PARAM in kyber1024
+for PARAM in ml-kem-1024
 do
   sed -i -s 's/KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K \* 352)/1/' ${BUILD_CRYPTO_KEM}/${PARAM}/{avx2,clean}/polyvec.c
   sed -i -s 's/KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K \* 320)/0/' ${BUILD_CRYPTO_KEM}/${PARAM}/{avx2,clean}/polyvec.c
 done
 
-unifdef -k -m -DKYBER_K=2 -DKYBER_ETA1=3 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -DXOF_BLOCKBYTES=168 -UKYBER_90S ${BUILD_CRYPTO_KEM}/kyber512/*/*.{c,h,S}
-unifdef -k -m -DKYBER_K=3 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -DXOF_BLOCKBYTES=168 -UKYBER_90S ${BUILD_CRYPTO_KEM}/kyber768/*/*.{c,h,S}
-unifdef -k -m -DKYBER_K=4 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=160 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -DXOF_BLOCKBYTES=168 -UKYBER_90S ${BUILD_CRYPTO_KEM}/kyber1024/*/*.{c,h,S}
+unifdef -k -m -DKYBER_K=2 -DKYBER_ETA1=3 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -DXOF_BLOCKBYTES=168 -UKYBER_90S ${BUILD_CRYPTO_KEM}/ml-kem-512/*/*.{c,h,S}
+unifdef -k -m -DKYBER_K=3 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=128 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -DXOF_BLOCKBYTES=168 -UKYBER_90S ${BUILD_CRYPTO_KEM}/ml-kem-768/*/*.{c,h,S}
+unifdef -k -m -DKYBER_K=4 -DKYBER_ETA1=2 -DKYBER_ETA2=2 -DKYBER_POLYCOMPRESSEDBYTES=160 -DKYBER_SSBYTES=32 -DKYBER_INDCPA_MSGBYTES=32 -DXOF_BLOCKBYTES=168 -UKYBER_90S ${BUILD_CRYPTO_KEM}/ml-kem-1024/*/*.{c,h,S}
 
-unifdef -k -m -DBMI ${BUILD_CRYPTO_KEM}/kyber*/avx2/*.{c,h,S}
+unifdef -k -m -DBMI ${BUILD_CRYPTO_KEM}/ml-kem-*/avx2/*.{c,h,S}
 endtask
 
 
@@ -225,7 +225,7 @@ MANIFEST=${BUILD_TEST}/duplicate_consistency
 mkdir -p ${MANIFEST}
 task "Preparing for duplicate consistency"
 ( cd ${MANIFEST}
-for P1 in kyber{512,768,1024}
+for P1 in ml-kem-{512,768,1024}
 do
   for OUT in clean avx2
   do
@@ -236,14 +236,14 @@ done
 endtask
 
 ( cd ${MANIFEST}
-for P1 in kyber{512,768,1024}
+for P1 in ml-kem-{512,768,1024}
 do
   for OUT in clean avx2
   do
     task "${P1}/${OUT} duplicate consistency"
     echo "\
 consistency_checks:" > ${P1}_${OUT}.yml
-    for P2 in kyber{512,768,1024}
+    for P2 in ml-kem-{512,768,1024}
     do
       for IN in clean avx2
       do
@@ -278,7 +278,7 @@ rm -rf ${MANIFEST}/*.xxx
 
 task 'Namespacing' 
 
-for PARAM in kyber{512,768,1024}
+for PARAM in ml-kem-{512,768,1024}
 do
   for IMPL in clean avx2
   do
@@ -301,7 +301,7 @@ done
 endtask
 
 task 'Checking include guards'
-for PARAM in kyber{512,768,1024}
+for PARAM in ml-kem-{512,768,1024}
 do
   for IMPL in clean avx2
   do
@@ -329,7 +329,7 @@ done
 endtask
 
 task 'Sorting #includes'
-for PARAM in kyber{512,768,1024}
+for PARAM in ml-kem-{512,768,1024}
 do
   for IMPL in clean avx2
   do

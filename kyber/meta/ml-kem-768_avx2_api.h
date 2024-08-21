@@ -7,7 +7,7 @@
 #define CRYPTO_PUBLICKEYBYTES  1184
 #define CRYPTO_CIPHERTEXTBYTES 1088
 #define CRYPTO_BYTES           32
-#define CRYPTO_ALGNAME "Kyber768"
+#define CRYPTO_ALGNAME "ML-KEM-768"
 
 int crypto_kem_keypair(uint8_t *pk, uint8_t *sk);
 

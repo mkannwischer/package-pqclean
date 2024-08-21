@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-#define CRYPTO_SECRETKEYBYTES  3168
-#define CRYPTO_PUBLICKEYBYTES  1568
-#define CRYPTO_CIPHERTEXTBYTES 1568
+#define CRYPTO_SECRETKEYBYTES  1632
+#define CRYPTO_PUBLICKEYBYTES  800
+#define CRYPTO_CIPHERTEXTBYTES 768
 #define CRYPTO_BYTES           32
-#define CRYPTO_ALGNAME "Kyber1024"
+#define CRYPTO_ALGNAME "ML-KEM-512"
 
 int crypto_kem_keypair(uint8_t *pk, uint8_t *sk);
 
