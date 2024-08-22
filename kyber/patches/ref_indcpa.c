@@ -1,6 +1,6 @@
 --- upstream/ref/indcpa.c
 +++ upstream-patched/ref/indcpa.c
-@@ -168,9 +168,9 @@
+@@ -172,9 +172,9 @@
    for(i=0;i<KYBER_K;i++) {
      for(j=0;j<KYBER_K;j++) {
        if(transposed)
@@ -12,8 +12,8 @@
  
        xof_squeezeblocks(buf, GEN_MATRIX_NBLOCKS, &state);
        buflen = GEN_MATRIX_NBLOCKS*XOF_BLOCKBYTES;
-@@ -184,6 +184,7 @@
-         buflen = off + XOF_BLOCKBYTES;
+@@ -185,6 +185,7 @@
+         buflen = XOF_BLOCKBYTES;
          ctr += rej_uniform(a[i].vec[j].coeffs + ctr, KYBER_N - ctr, buf, buflen);
        }
 +      xof_ctx_release(&state);

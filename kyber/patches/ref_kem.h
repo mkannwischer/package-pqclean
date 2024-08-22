@@ -1,5 +1,5 @@
---- upstream/ref/kem.h	2024-08-18 05:45:35.000000000 +0800
-+++ upstream-patched/ref/kem.h	2024-08-21 19:20:01.581871811 +0800
+--- upstream/ref/kem.h
++++ upstream-patched/ref/kem.h
 @@ -10,11 +10,11 @@
  #define CRYPTO_BYTES           KYBER_SSBYTES
  
@@ -15,3 +15,4 @@
  #endif
  
  #define crypto_kem_keypair_derand KYBER_NAMESPACE(keypair_derand)
+
