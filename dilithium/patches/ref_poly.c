@@ -32,11 +32,11 @@
 +  shake256incctx state;
  
 -  shake256_init(&state);
--  shake256_absorb(&state, seed, SEEDBYTES);
+-  shake256_absorb(&state, seed, CTILDEBYTES);
 -  shake256_finalize(&state);
 -  shake256_squeezeblocks(buf, 1, &state);
 +  shake256_inc_init(&state);
-+  shake256_inc_absorb(&state, seed, SEEDBYTES);
++  shake256_inc_absorb(&state, seed, CTILDEBYTES);
 +  shake256_inc_finalize(&state);
 +  shake256_inc_squeeze(buf, sizeof buf, &state);
  
@@ -197,7 +197,7 @@
 -    r[5*i+2] |= t[1] << 4;
 -    r[5*i+3]  = t[1] >> 4;
 -    r[5*i+4]  = t[1] >> 12;
-+    r[5*i+0]  = (uint8_t) t[0];
++    r[5*i+0]  = (uint8_t) (t[0]);
 +    r[5*i+1]  = (uint8_t) (t[0] >> 8);
 +    r[5*i+2]  = (uint8_t) (t[0] >> 16);
 +    r[5*i+2] |= (uint8_t) (t[1] << 4);

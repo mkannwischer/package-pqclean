@@ -209,9 +209,9 @@ sed -i -s 's/#\(.*\) GAMMA1 == (1 << 19)/#\1 1/' ${BUILD_CRYPTO_SIGN}/dilithium{
 sed -i -s 's/#\(.*\) GAMMA2 == (Q-1).88/#\1 0/' ${BUILD_CRYPTO_SIGN}/dilithium{3,5}*/*/{poly.c,rounding.c,params.h}
 sed -i -s 's/#\(.*\) GAMMA2 == (Q-1).32/#\1 1/' ${BUILD_CRYPTO_SIGN}/dilithium{3,5}*/*/{poly.c,rounding.c,params.h}
 
-unifdef -k -m -DDILITHIUM_MODE=2 -DD=13 -DK=4 -DL=4 -DETA=2 -UDILITHIUM_USE_AES -UDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium2/*/*.{c,h,S}
-unifdef -k -m -DDILITHIUM_MODE=3 -DD=13 -DK=6 -DL=5 -DETA=4 -UDILITHIUM_USE_AES -UDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium3/*/*.{c,h,S}
-unifdef -k -m -DDILITHIUM_MODE=5 -DD=13 -DK=8 -DL=7 -DETA=2 -UDILITHIUM_USE_AES -UDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium5/*/*.{c,h,S}
+unifdef -k -m -DDILITHIUM_MODE=2 -DD=13 -DK=4 -DL=4 -DETA=2 -UDILITHIUM_USE_AES -DDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium2/*/*.{c,h,S}
+unifdef -k -m -DDILITHIUM_MODE=3 -DD=13 -DK=6 -DL=5 -DETA=4 -UDILITHIUM_USE_AES -DDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium3/*/*.{c,h,S}
+unifdef -k -m -DDILITHIUM_MODE=5 -DD=13 -DK=8 -DL=7 -DETA=2 -UDILITHIUM_USE_AES -DDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium5/*/*.{c,h,S}
 
 endtask
 
@@ -289,6 +289,7 @@ do
     sed -i -s '/DILITHIUM_NAMESPACE/d' *.{c,h}
     sed -i -s "s/CRYPTO_/${NAMESPACE}_CRYPTO_/g" *.{c,h}
     sed -i "s/API_H/${NAMESPACE}_API_H/" api.h
+    sed -i "s/PQCLEAN_NAMESPACE/${NAMESPACE}/" *.{c,h}
     sed -i "s/PQCLEAN_NAMESPACE/${NAMESPACE}/" *.{c,h}
     [ "${IMPL}" == "avx2" ] && sed -i -s "s/cdecl(\(.*\))/cdecl(${NAMESPACE}_\1)/" *.S
     )

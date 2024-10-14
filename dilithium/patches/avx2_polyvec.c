@@ -103,4 +103,18 @@
  
    return 0;
  }
+@@ -573,11 +584,11 @@
+ *              - const polyveck *u: pointer to input vector
+ *              - const polyveck *h: pointer to input hint vector
+ **************************************************/
+-void polyveck_use_hint(polyveck *w, const polyveck *u, const polyveck *h) {
++void polyveck_use_hint(polyveck *w, const polyveck *v, const polyveck *h) {
+   unsigned int i;
+ 
+   for(i = 0; i < K; ++i)
+-    poly_use_hint(&w->vec[i], &u->vec[i], &h->vec[i]);
++    poly_use_hint(&w->vec[i], &v->vec[i], &h->vec[i]);
+ }
+ 
+ void polyveck_pack_w1(uint8_t r[K*POLYW1_PACKEDBYTES], const polyveck *w1) {
 
