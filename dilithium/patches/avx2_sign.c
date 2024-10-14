@@ -119,8 +119,14 @@
  
    /* Expand challenge */
    poly_challenge(&c, sig);
-@@ -415,15 +418,16 @@
+@@ -411,19 +414,21 @@
+   }
+ 
+   /* Extra indices are zero for strong unforgeability */
+-  for(j = pos; j < OMEGA; ++j)
++  for(j = pos; j < OMEGA; ++j) {
      if(hint[j]) return -1;
++  }
  
    /* Call random oracle and verify challenge */
 -  shake256_init(&state);
@@ -143,7 +149,7 @@
    return 0;
  }
  
-@@ -443,7 +447,7 @@
+@@ -443,7 +448,7 @@
  *
  * Returns 0 if signed message could be verified correctly and -1 otherwise
  **************************************************/
@@ -152,7 +158,7 @@
                       const uint8_t *ctx, size_t ctxlen, const uint8_t *pk) {
    size_t i;
  
-@@ -451,7 +455,7 @@
+@@ -451,7 +456,7 @@
      goto badsig;
  
    *mlen = smlen - CRYPTO_BYTES;
