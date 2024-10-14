@@ -57,7 +57,7 @@ done
 )
 endtask
 
-for PARAM in dilithium{2,3,5}
+for PARAM in ml-dsa-{44,65,87}
 do
   mkdir -p ${BUILD_CRYPTO_SIGN}/${PARAM}/avx2
   mkdir -p ${BUILD_CRYPTO_SIGN}/${PARAM}/clean
@@ -196,22 +196,22 @@ done
 task 'Simplifying ifdefs'
 
 # unifdef does not like the #if [...] #else #error #endif construction
-sed -i -s '/#error/d' ${BUILD_CRYPTO_SIGN}/dilithium*/avx2/polyvec.c
-sed -i -s '/#error/d' ${BUILD_CRYPTO_SIGN}/dilithium*/avx2/sign.c
+sed -i -s '/#error/d' ${BUILD_CRYPTO_SIGN}/ml-dsa-*/avx2/polyvec.c
+sed -i -s '/#error/d' ${BUILD_CRYPTO_SIGN}/ml-dsa-*/avx2/sign.c
 
-sed -i -s 's/#\(.*\) GAMMA1 == (1 << 17)/#\1 1/' ${BUILD_CRYPTO_SIGN}/dilithium2*/*/{poly.c,rounding.c,params.h}
-sed -i -s 's/#\(.*\) GAMMA1 == (1 << 19)/#\1 0/' ${BUILD_CRYPTO_SIGN}/dilithium2*/*/{poly.c,rounding.c,params.h}
-sed -i -s 's/#\(.*\) GAMMA2 == (Q-1).88/#\1 1/' ${BUILD_CRYPTO_SIGN}/dilithium2*/*/{poly.c,rounding.c,params.h}
-sed -i -s 's/#\(.*\) GAMMA2 == (Q-1).32/#\1 0/' ${BUILD_CRYPTO_SIGN}/dilithium2*/*/{poly.c,rounding.c,params.h}
+sed -i -s 's/#\(.*\) GAMMA1 == (1 << 17)/#\1 1/' ${BUILD_CRYPTO_SIGN}/ml-dsa-44*/*/{poly.c,rounding.c,params.h}
+sed -i -s 's/#\(.*\) GAMMA1 == (1 << 19)/#\1 0/' ${BUILD_CRYPTO_SIGN}/ml-dsa-44*/*/{poly.c,rounding.c,params.h}
+sed -i -s 's/#\(.*\) GAMMA2 == (Q-1).88/#\1 1/' ${BUILD_CRYPTO_SIGN}/ml-dsa-44*/*/{poly.c,rounding.c,params.h}
+sed -i -s 's/#\(.*\) GAMMA2 == (Q-1).32/#\1 0/' ${BUILD_CRYPTO_SIGN}/ml-dsa-44*/*/{poly.c,rounding.c,params.h}
 
-sed -i -s 's/#\(.*\) GAMMA1 == (1 << 17)/#\1 0/' ${BUILD_CRYPTO_SIGN}/dilithium{3,5}*/*/{poly.c,rounding.c,params.h}
-sed -i -s 's/#\(.*\) GAMMA1 == (1 << 19)/#\1 1/' ${BUILD_CRYPTO_SIGN}/dilithium{3,5}*/*/{poly.c,rounding.c,params.h}
-sed -i -s 's/#\(.*\) GAMMA2 == (Q-1).88/#\1 0/' ${BUILD_CRYPTO_SIGN}/dilithium{3,5}*/*/{poly.c,rounding.c,params.h}
-sed -i -s 's/#\(.*\) GAMMA2 == (Q-1).32/#\1 1/' ${BUILD_CRYPTO_SIGN}/dilithium{3,5}*/*/{poly.c,rounding.c,params.h}
+sed -i -s 's/#\(.*\) GAMMA1 == (1 << 17)/#\1 0/' ${BUILD_CRYPTO_SIGN}/ml-dsa-{65,87}*/*/{poly.c,rounding.c,params.h}
+sed -i -s 's/#\(.*\) GAMMA1 == (1 << 19)/#\1 1/' ${BUILD_CRYPTO_SIGN}/ml-dsa-{65,87}*/*/{poly.c,rounding.c,params.h}
+sed -i -s 's/#\(.*\) GAMMA2 == (Q-1).88/#\1 0/' ${BUILD_CRYPTO_SIGN}/ml-dsa-{65,87}*/*/{poly.c,rounding.c,params.h}
+sed -i -s 's/#\(.*\) GAMMA2 == (Q-1).32/#\1 1/' ${BUILD_CRYPTO_SIGN}/ml-dsa-{65,87}*/*/{poly.c,rounding.c,params.h}
 
-unifdef -k -m -DDILITHIUM_MODE=2 -DD=13 -DK=4 -DL=4 -DETA=2 -UDILITHIUM_USE_AES -DDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium2/*/*.{c,h,S}
-unifdef -k -m -DDILITHIUM_MODE=3 -DD=13 -DK=6 -DL=5 -DETA=4 -UDILITHIUM_USE_AES -DDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium3/*/*.{c,h,S}
-unifdef -k -m -DDILITHIUM_MODE=5 -DD=13 -DK=8 -DL=7 -DETA=2 -UDILITHIUM_USE_AES -DDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/dilithium5/*/*.{c,h,S}
+unifdef -k -m -DDILITHIUM_MODE=2 -DD=13 -DK=4 -DL=4 -DETA=2 -UDILITHIUM_USE_AES -DDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/ml-dsa-44/*/*.{c,h,S}
+unifdef -k -m -DDILITHIUM_MODE=3 -DD=13 -DK=6 -DL=5 -DETA=4 -UDILITHIUM_USE_AES -DDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/ml-dsa-65/*/*.{c,h,S}
+unifdef -k -m -DDILITHIUM_MODE=5 -DD=13 -DK=8 -DL=7 -DETA=2 -UDILITHIUM_USE_AES -DDILITHIUM_RANDOMIZED_SIGNING -UDBENCH -U__ASSEMBLER__ ${BUILD_CRYPTO_SIGN}/ml-dsa-87/*/*.{c,h,S}
 
 endtask
 
@@ -220,7 +220,7 @@ MANIFEST=${BUILD_TEST}/duplicate_consistency
 mkdir -p ${MANIFEST}
 task "Preparing for duplicate consistency"
 ( cd ${MANIFEST}
-for P1 in dilithium{2,3,5}
+for P1 in ml-dsa-{44,65,87}
 do
   for OUT in clean avx2
   do
@@ -231,14 +231,14 @@ done
 endtask
 
 ( cd ${MANIFEST}
-for P1 in dilithium{2,3,5}
+for P1 in ml-dsa-{44,65,87}
 do
   for OUT in clean avx2
   do
     task "${P1}/${OUT} duplicate consistency"
     echo "\
 consistency_checks:" > ${P1}_${OUT}.yml
-    for P2 in dilithium{2,3,5}
+    for P2 in ml-dsa-{44,65,87}
     do
       for IN in clean avx2
       do
@@ -273,7 +273,7 @@ rm -rf ${MANIFEST}/*.xxx
 
 task 'Namespacing' 
 
-for PARAM in dilithium{2,3,5}
+for PARAM in ml-dsa-{44,65,87}
 do
   for IMPL in clean avx2
   do
@@ -298,7 +298,7 @@ done
 endtask
 
 task 'Checking include guards'
-for PARAM in dilithium{2,3,5}
+for PARAM in ml-dsa-{44,65,87}
 do
   for IMPL in clean avx2
   do
@@ -326,7 +326,7 @@ done
 endtask
 
 task 'Sorting #includes'
-for PARAM in dilithium{2,3,5}
+for PARAM in ml-dsa-{44,65,87}
 do
   for IMPL in clean avx2
   do
