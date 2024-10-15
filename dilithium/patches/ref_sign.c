@@ -18,10 +18,11 @@
  
    if(ctxlen > 255)
      return -1;
-@@ -112,13 +112,14 @@
+@@ -111,14 +111,15 @@
+ 
    /* Compute mu = CRH(tr, 0, ctxlen, ctx, msg) */
    mu[0] = 0;
-   mu[1] = ctxlen;
+-  mu[1] = ctxlen;
 -  shake256_init(&state);
 -  shake256_absorb(&state, tr, TRBYTES);
 -  shake256_absorb(&state, mu, 2);
@@ -29,6 +30,7 @@
 -  shake256_absorb(&state, m, mlen);
 -  shake256_finalize(&state);
 -  shake256_squeeze(mu, CRHBYTES, &state);
++  mu[1] = (uint8_t)ctxlen;
 +  shake256_inc_init(&state);
 +  shake256_inc_absorb(&state, tr, TRBYTES);
 +  shake256_inc_absorb(&state, mu, 2);
@@ -103,12 +105,13 @@
 +  shake256_inc_init(&state);
 +  shake256_inc_absorb(&state, mu, TRBYTES);
    mu[0] = 0;
-   mu[1] = ctxlen;
+-  mu[1] = ctxlen;
 -  shake256_absorb(&state, mu, 2);
 -  shake256_absorb(&state, ctx, ctxlen);
 -  shake256_absorb(&state, m, mlen);
 -  shake256_finalize(&state);
 -  shake256_squeeze(mu, CRHBYTES, &state);
++  mu[1] = (uint8_t)ctxlen;
 +  shake256_inc_absorb(&state, mu, 2);
 +  shake256_inc_absorb(&state, ctx, ctxlen);
 +  shake256_inc_absorb(&state, m, mlen);
